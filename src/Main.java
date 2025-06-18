@@ -33,8 +33,8 @@ public class Main {
 
         tokens.forEach(System.out::println);
         try {
-            AnalisadorSintatico parser = new AnalisadorSintatico(tokens);
-            parser.analisar();
+            AnalisadorSintatico teste = new AnalisadorSintatico(tokens);
+            teste.analisar();
             System.out.println("Código válido!");
         } catch (ErroSintatico e) {
             System.err.println(e.getMessage());
@@ -42,8 +42,8 @@ public class Main {
 
         tokensErrados.forEach(System.out::println);
         try {
-            AnalisadorSintatico parser = new AnalisadorSintatico(tokensErrados);
-            parser.analisar();
+            AnalisadorSintatico teste2 = new AnalisadorSintatico(tokensErrados);
+            teste2.analisar();
             System.out.println("Código válido!");
         } catch (ErroSintatico e) {
             System.err.println(e.getMessage());

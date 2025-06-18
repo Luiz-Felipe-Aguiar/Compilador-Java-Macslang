@@ -2,7 +2,7 @@ package AnalisadorLexico;
 
 //essa e uma classe apenas que armazena os tipos que um token pode ser
 public enum TokenType {
-    KEYWORD, IDENTIFIER, TYPE, OPERATOR, DELIMITER, LITERAL, NUMBER, STRING, CHAR, ASSIGN, RETURN, UNKNOWN
+    KEYWORD, IDENTIFIER, TYPE, OPERATOR, DELIMITER, NUMBER, STRING, CHAR, UNKNOWN
 }
 
 //keywords - var,func e return

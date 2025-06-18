@@ -55,7 +55,7 @@ public class AnalisadorSintatico {
         verificarToken(TokenType.DELIMITER, ":");
         verificarToken(TokenType.TYPE);
         verificarToken(TokenType.OPERATOR, "=");
-        analisarExpressao(); // Agora aceita expressões matemáticas
+        analisarExpressao();
         verificarToken(TokenType.DELIMITER, ";");
     }
 
@@ -95,7 +95,7 @@ public class AnalisadorSintatico {
         if (token != null && token.getType() == TokenType.IDENTIFIER) {
             consumirToken();
             verificarToken(TokenType.OPERATOR, "=");
-            analisarExpressao(); // Agora aceita expressões matemáticas
+            analisarExpressao();
             verificarToken(TokenType.DELIMITER, ";");
         } else if (token != null && token.getValue().equals("var")) {
             consumirToken();
