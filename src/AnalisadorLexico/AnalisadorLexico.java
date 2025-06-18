@@ -1,53 +1,62 @@
 package AnalisadorLexico;
 
-import java.util.*; //import para criar um arraylist que recebe o codigop
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 
 public class AnalisadorLexico {
-    // aqui usamos o static final para que possamos ter um conjunto imutavel de valores para um tipo de token
+    // Palavras-chave da linguagem
     private static final Set<String> KEYWORDS = Set.of("var", "func", "return");
+    // Tipos primitivos
     private static final Set<String> TYPES = Set.of("int", "float", "string", "char");
+    // Operadores e delimitadores
     private static final Set<String> OPERATORS = Set.of("+", "-", "*", "/", "=");
     private static final Set<String> DELIMITERS = Set.of(";", "(", ")", "{", "}", ",", ":");
 
-    //regex que validam se um validam os identifiers estão ok
+    //Validadores dos identifiers
     private static final String IDENTIFIER_REGEX = "[a-zA-Z_]\\w*";
     private static final String NUMBER_REGEX = "\\d+";
-    private static final String STRING_REGEX = "\".*\"";
-    private static final String CHAR_REGEX = "'.'";
+    private static final String FLOAT_REGEX = "\\d+(\\.\\d+)?";
+    private static final String STRING_REGEX = "\"[^\"]*\"";
+    private static final String CHAR_REGEX = "'(.)'";
 
-    //metodo para a separação dos tokenx, tokenizaçao
+    //Metodo para a separação dos tokens
     public static List<Token> tokenize(String input) {
-        List<Token> tokens = new ArrayList<>();// aqui sera recebido o codigo a ser analisado em forma de um array list de tokens
+        //Array list de retorno
+        List<Token> tokens = new ArrayList<>();
 
-        String[] words = input.split("\\s+|(?=[;,+\\-*/(){}=:])|(?<=;|,|\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|=|:)"); // metodo split recebe uma experssao regular como parametro
-        // o metodo split recebe uma regex como parametro.
+        //Splita uma experssão regular
+        String[] words = input.split("\\s+|(?=[;,+\\-*/(){}=:])|(?<=;|,|\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|=|:)");
 
-        // \\s+ -> Divide palavras separadas por espaços (\\s+).
-        // (?=[;,+\\-*/(){}=:])  -> Separa operadores antes de ((?=[...])), garantindo que não grudem em palavras
-        // (?<=;|,|\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|=|:) -> Separa operadores depois ((?<=...)), garantindo também que fiquem isolados corretamente.
-
-        //aqui abaixo só temos um loop uqe primeiro pega o array list já dividio e passa a palavra separada nas condições atribundo ela como valor em um token e seu tipo correto
+        //Loop que identifica os valores do array words
         for (String word : words) {
-            if (word.isEmpty()) continue; // para ignorar os tokens vazios que estavam dando erro no sintatico
+            if (word.isEmpty()) continue;
+
+            TokenType type = null;
+
             if (KEYWORDS.contains(word)) {
-                tokens.add(new Token(TokenType.KEYWORD, word));
+                type = TokenType.KEYWORD;
             } else if (TYPES.contains(word)) {
-                tokens.add(new Token(TokenType.TYPE, word));
+                type = TokenType.TYPE;
             } else if (OPERATORS.contains(word)) {
-                tokens.add(new Token(TokenType.OPERATOR, word));
+                type = TokenType.OPERATOR;
             } else if (DELIMITERS.contains(word)) {
-                tokens.add(new Token(TokenType.DELIMITER, word));
+                type = TokenType.DELIMITER;
             } else if (word.matches(NUMBER_REGEX)) {
-                tokens.add(new Token(TokenType.NUMBER, word));
+                type = TokenType.NUMBER;
+            } else if (word.matches(FLOAT_REGEX)) {
+                type = TokenType.FLOAT;
             } else if (word.matches(STRING_REGEX)) {
-                tokens.add(new Token(TokenType.STRING, word));
+                type = TokenType.STRING;
             } else if (word.matches(CHAR_REGEX)) {
-                tokens.add(new Token(TokenType.CHAR, word));
+                type = TokenType.CHAR;
             } else if (word.matches(IDENTIFIER_REGEX)) {
-                tokens.add(new Token(TokenType.IDENTIFIER, word));
+                type = TokenType.IDENTIFIER;
             } else {
-                tokens.add(new Token(TokenType.UNKNOWN, word));
+                type = TokenType.UNKNOWN;
             }
+
+            tokens.add(new Token(type, word));
         }
 
         return tokens;

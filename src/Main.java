@@ -1,52 +1,45 @@
 import AnalisadorLexico.*;
 import AnalisadorSintatico.*;
 
-import AnalisadorLexico.AnalisadorLexico;
-import AnalisadorLexico.Token;
-import AnalisadorSintatico.AnalisadorSintatico;
-import AnalisadorSintatico.ErroSintatico;
-
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        //String code = "var x: int = 10;"; //da certo
-        //String code = "func fatorial(n: int): int { var resultado: int = 1*n; return resultado;}";
-        /*
-        String code = "func soma(a: int, b: int): int {\n" +
-                "    return a + b;\n" +
-                "}";
-         */
 
-        String codeCerto = "func calculaDobro(x: int): int {\n" +
-                "    var resultado: int = x * 2;\n" +
-                "    return resultado;\n" +
-                "}";
+        //String declaration_correto = "var x: int = 10;"; //da certo
+        //String declaration_errado = "func fatorial(n: int): int { var resultado: int = 1*n; return resultado;}";
 
-        String codeErrado = "func calculaDobro(x: int): string {\n" +
-                "    var resultado: int = x * 2;\n" +
-                "    return resultado;\n" +
-                "}";
-        List<Token> tokens = AnalisadorLexico.tokenize(codeCerto);
+        String function_correto = """
+                func calculaDobro(x: int): int {
+                    var resultado: int = x * 2;
+                    return resultado;
+                }""";
 
-        List<Token> tokensErrados = AnalisadorLexico.tokenize(codeErrado);
+        String function_errado = """
+                func calculaDobro(x: int): string {
+                    var resultado: int = x * 2;
+                    return resultado;
+                }""";
 
-        tokens.forEach(System.out::println);
+        testarCodigo(function_correto);
+
+        testarCodigo(function_errado);
+    }
+
+    private static void testarCodigo(String codigo) {
         try {
-            AnalisadorSintatico teste = new AnalisadorSintatico(tokens);
-            teste.analisar();
-            System.out.println("Código válido!");
-        } catch (ErroSintatico e) {
-            System.err.println(e.getMessage());
-        }
+            List<Token> tokens = AnalisadorLexico.tokenize(codigo);
+            //Para imprimir cada token
+            // tokens.forEach(System.out::println);
 
-        tokensErrados.forEach(System.out::println);
-        try {
-            AnalisadorSintatico teste2 = new AnalisadorSintatico(tokensErrados);
-            teste2.analisar();
-            System.out.println("Código válido!");
+            AnalisadorSintatico analisador = new AnalisadorSintatico(tokens);
+            analisador.analisar();
+
+            System.out.println("✅ Código válido!");
         } catch (ErroSintatico e) {
-            System.err.println(e.getMessage());
+            System.err.println("❌ Erro sintático: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("❌ Erro inesperado: " + e.getMessage());
         }
     }
 }

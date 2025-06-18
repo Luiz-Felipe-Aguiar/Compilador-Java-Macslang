@@ -23,12 +23,11 @@ public class AnalisadorSemantico {
         return posicaoAtual < tokens.size() ? tokens.get(posicaoAtual) : null;
     }
 
-    // Avança um token
     private void consumirToken() {
         posicaoAtual++;
     }
 
-    // Método principal que percorre os tokens.
+    // Metodo principal que percorre os tokens.
     public boolean analisar() throws ErroSintatico {
         // Processa tokens de nível superior (declarações de funções, por exemplo)
         while (posicaoAtual < tokens.size()) {

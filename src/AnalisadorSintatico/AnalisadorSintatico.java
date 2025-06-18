@@ -5,24 +5,30 @@ import AnalisadorLexico.TokenType;
 import java.util.List;
 
 public class AnalisadorSintatico {
-    //atributo principal é o array list criado pela classe do analisador lexico
+    //Atributo principal que é o array list criado pela classe do analisador lexico.
     private List<Token> tokens;
-    //apenas um gravador de posiçã
     private int posicaoAtual = 0;
 
     public AnalisadorSintatico(List<Token> tokens) {
         this.tokens = tokens;
     }
 
-    //retorna o token que esta sendo analisado no arrayllist, se aposição passar do tamanho do arraylist, retorna null
+    //Retorna o token que esta sendo analisado no arrayllist, retorna null se a posição for maior que o array
     private Token tokenAtual() {
         return posicaoAtual < tokens.size() ? tokens.get(posicaoAtual) : null;
     }
 
-    //apenas para verificar os tokens que foram consumidos nas posições
     private void consumirToken() {
-        System.out.println("Consumindo token: " + tokenAtual() + " na posição " + posicaoAtual);
+        //System.out.println("Consumindo token: " + tokenAtual() + " na posição " + posicaoAtual);
         posicaoAtual++;
+    }
+
+    //Percorre todos os tokens e analisa declarações
+    public void analisar() throws ErroSintatico {
+        while (posicaoAtual < tokens.size()) {
+            analisarDeclaracao();
+        }
+        System.out.println("Análise sintática concluída sem erros!");
     }
 
     private void analisarDeclaracao() throws ErroSintatico {
@@ -42,18 +48,11 @@ public class AnalisadorSintatico {
         }
     }
 
-    //metodo que pervorre todos os tokens e se estiver errado ele lança o erro do metodo analisa declaração, senao ele avisa que a analise esta correta
-    public void analisar() throws ErroSintatico {
-        while (posicaoAtual < tokens.size()) {
-            analisarDeclaracao();
-        }
-        System.out.println("Análise sintática concluída sem erros!");
-    }
 
     private void analisarDeclaracaoVariavel() throws ErroSintatico {
-        verificarToken(TokenType.IDENTIFIER);
+        verificarToken(TokenType.IDENTIFIER, null);
         verificarToken(TokenType.DELIMITER, ":");
-        verificarToken(TokenType.TYPE);
+        verificarToken(TokenType.TYPE, null);
         verificarToken(TokenType.OPERATOR, "=");
         analisarExpressao();
         verificarToken(TokenType.DELIMITER, ";");
@@ -61,12 +60,12 @@ public class AnalisadorSintatico {
 
 
     private void analisarDeclaracaoFuncao() throws ErroSintatico {
-        verificarToken(TokenType.IDENTIFIER);
+        verificarToken(TokenType.IDENTIFIER, null);
         verificarToken(TokenType.DELIMITER, "(");
         analisarParametros();
         verificarToken(TokenType.DELIMITER, ")");
         verificarToken(TokenType.DELIMITER, ":");
-        verificarToken(TokenType.TYPE);
+        verificarToken(TokenType.TYPE, null);
         verificarToken(TokenType.DELIMITER, "{");
 
         while (tokenAtual() != null && !tokenAtual().getValue().equals("}")) {
@@ -80,7 +79,7 @@ public class AnalisadorSintatico {
         while (tokenAtual() != null && tokenAtual().getType() == TokenType.IDENTIFIER) {
             consumirToken();
             verificarToken(TokenType.DELIMITER, ":");
-            verificarToken(TokenType.TYPE);
+            verificarToken(TokenType.TYPE, null);
             if (tokenAtual() != null && tokenAtual().getValue().equals(",")) {
                 consumirToken();
             } else {
@@ -109,35 +108,15 @@ public class AnalisadorSintatico {
         }
     }
 
-
-    private void verificarToken(TokenType esperado) throws ErroSintatico {
-        Token token = tokenAtual();
-        System.out.println("Verificando token: " + token);
-        if (token == null || token.getType() != esperado) {
-            throw new ErroSintatico("Esperado token do tipo " + esperado + ", encontrado: " + (token != null ? token.getValue() : "EOF"));
-        }
-        consumirToken();
-    }
-
     private void verificarToken(TokenType esperado, String valorEsperado) throws ErroSintatico {
         Token token = tokenAtual();
-        System.out.println("Verificando token: " + token);
-        if (token == null || token.getType() != esperado || !token.getValue().equals(valorEsperado)) {
-            throw new ErroSintatico("Esperado '" + valorEsperado + "', encontrado: " + (token != null ? token.getValue() : "EOF"));
-        }
-        consumirToken();
-    }
 
-    private void verificarValor() throws ErroSintatico {
-        Token token = tokenAtual();
-        System.out.println("Verificando valor: " + token);
+        boolean tipoCorreto = token != null && token.getType() == esperado;
+        boolean valorCorreto = valorEsperado == null || (token != null && token.getValue().equals(valorEsperado));
 
-        if (token == null ||
-                (token.getType() != TokenType.NUMBER &&
-                        token.getType() != TokenType.STRING &&
-                        token.getType() != TokenType.CHAR &&
-                        token.getType() != TokenType.IDENTIFIER)) { // Permitir identificadores para constantes
-            throw new ErroSintatico("Esperado um valor (number, string, char), encontrado: " + (token != null ? token.getValue() : "EOF"));
+        if (!tipoCorreto || !valorCorreto) {
+            String esperadoStr = valorEsperado != null ? "'" + valorEsperado + "'" : esperado.toString();
+            throw new ErroSintatico("Esperado " + esperadoStr + ", encontrado: " + (token != null ? token.getValue() : "EOF"));
         }
 
         consumirToken();
@@ -147,9 +126,10 @@ public class AnalisadorSintatico {
         Token token = tokenAtual();
         if (token == null ||
                 (token.getType() != TokenType.NUMBER &&
-                        token.getType() != TokenType.STRING &&
-                        token.getType() != TokenType.CHAR &&
-                        token.getType() != TokenType.IDENTIFIER)) {
+                token.getType() != TokenType.FLOAT &&
+                token.getType() != TokenType.STRING &&
+                token.getType() != TokenType.CHAR &&
+                token.getType() != TokenType.IDENTIFIER)) {
             throw new ErroSintatico("Esperado um termo numérico ou variável, encontrado: " + (token != null ? token.getValue() : "EOF"));
         }
         consumirToken();
