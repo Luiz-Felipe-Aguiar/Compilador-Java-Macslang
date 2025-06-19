@@ -3,6 +3,8 @@ package AnalisadorLexico;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AnalisadorLexico {
     // Palavras-chave da linguagem
@@ -15,8 +17,8 @@ public class AnalisadorLexico {
 
     //Validadores dos identifiers
     private static final String IDENTIFIER_REGEX = "[a-zA-Z_]\\w*";
-    private static final String NUMBER_REGEX = "\\d+";
-    private static final String FLOAT_REGEX = "\\d+(\\.\\d+)?";
+    private static final String NUMBER_REGEX = "\\d+(?!\\.)";
+    private static final String FLOAT_REGEX = "\\d+\\.\\d+";
     private static final String STRING_REGEX = "\"[^\"]*\"";
     private static final String CHAR_REGEX = "'(.)'";
 
@@ -24,39 +26,38 @@ public class AnalisadorLexico {
     public static List<Token> tokenize(String input) {
         //Array list de retorno
         List<Token> tokens = new ArrayList<>();
+        // Regex que captura todos os tipos de tokens
 
-        //Splita uma experssão regular
-        String[] words = input.split("\\s+|(?=[;,+\\-*/(){}=:])|(?<=;|,|\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|=|:)");
+        //Analisador de padroes baseados no regex para dividir os tokens
+        Pattern pattern = Pattern.compile("\"[^\"]*\"|'[^']'|\\d+\\.\\d+|\\d+|[a-zA-Z_]\\w*|[;,+\\-*/(){}=:]");
+        Matcher matcher = pattern.matcher(input);
 
-        //Loop que identifica os valores do array words
-        for (String word : words) {
+        //Loop que identifica os  do array words
+        while (matcher.find()) {
+            String word = matcher.group();
             if (word.isEmpty()) continue;
 
-            TokenType type = null;
-
             if (KEYWORDS.contains(word)) {
-                type = TokenType.KEYWORD;
+                tokens.add(new Token(TokenType.KEYWORD, word));
             } else if (TYPES.contains(word)) {
-                type = TokenType.TYPE;
+                tokens.add(new Token(TokenType.TYPE, word));
             } else if (OPERATORS.contains(word)) {
-                type = TokenType.OPERATOR;
+                tokens.add(new Token(TokenType.OPERATOR, word));
             } else if (DELIMITERS.contains(word)) {
-                type = TokenType.DELIMITER;
-            } else if (word.matches(NUMBER_REGEX)) {
-                type = TokenType.NUMBER;
+                tokens.add(new Token(TokenType.DELIMITER, word));
             } else if (word.matches(FLOAT_REGEX)) {
-                type = TokenType.FLOAT;
+                tokens.add(new Token(TokenType.FLOAT, word));
+            } else if (word.matches(NUMBER_REGEX)) {
+                tokens.add(new Token(TokenType.NUMBER, word));
             } else if (word.matches(STRING_REGEX)) {
-                type = TokenType.STRING;
+                tokens.add(new Token(TokenType.STRING, word));
             } else if (word.matches(CHAR_REGEX)) {
-                type = TokenType.CHAR;
+                tokens.add(new Token(TokenType.CHAR, word));
             } else if (word.matches(IDENTIFIER_REGEX)) {
-                type = TokenType.IDENTIFIER;
+                tokens.add(new Token(TokenType.IDENTIFIER, word));
             } else {
-                type = TokenType.UNKNOWN;
+                tokens.add(new Token(TokenType.UNKNOWN, word));
             }
-
-            tokens.add(new Token(type, word));
         }
 
         return tokens;
