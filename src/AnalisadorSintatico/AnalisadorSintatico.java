@@ -28,7 +28,7 @@ public class AnalisadorSintatico {
         while (posicaoAtual < tokens.size()) {
             analisarDeclaracao();
         }
-        System.out.println("Análise sintática concluída sem erros!");
+        //System.out.println("Análise sintática concluída sem erros!");
     }
 
     private void analisarDeclaracao() throws ErroSintatico {
