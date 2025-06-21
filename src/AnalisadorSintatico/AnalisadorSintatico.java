@@ -5,15 +5,15 @@ import AnalisadorLexico.TokenType;
 import java.util.List;
 
 public class AnalisadorSintatico {
-    //Atributo principal que é o array list criado pela classe do analisador lexico.
     private List<Token> tokens;
     private int posicaoAtual = 0;
 
+    // classe recebe uma List<Tokens> que vem to analisador lexico
     public AnalisadorSintatico(List<Token> tokens) {
         this.tokens = tokens;
     }
 
-    //Retorna o token que esta sendo analisado no arrayllist, retorna null se a posição for maior que o array
+    // Retorna o token que esta sendo analisado no arrayllist, retorna null se a posição for maior que o array
     private Token tokenAtual() {
         return posicaoAtual < tokens.size() ? tokens.get(posicaoAtual) : null;
     }
@@ -23,14 +23,14 @@ public class AnalisadorSintatico {
         posicaoAtual++;
     }
 
-    //Percorre todos os tokens e analisa declarações
+    // Ponto inicial da validação sintatica, percorre por todos os tokens
     public void analisar() throws ErroSintatico {
         while (posicaoAtual < tokens.size()) {
             analisarDeclaracao();
         }
-        //System.out.println("Análise sintática concluída sem erros!");
     }
 
+    // Analisa a declaração e a valida baseado no tipo da sentença, declaração de variavel ou função
     private void analisarDeclaracao() throws ErroSintatico {
         Token token = tokenAtual();
         if (token != null && token.getType() == TokenType.KEYWORD) {
@@ -48,7 +48,7 @@ public class AnalisadorSintatico {
         }
     }
 
-
+    // analisador de variavel. Se ela segue essa ordem.
     private void analisarDeclaracaoVariavel() throws ErroSintatico {
         verificarToken(TokenType.IDENTIFIER, null);
         verificarToken(TokenType.DELIMITER, ":");
@@ -58,7 +58,7 @@ public class AnalisadorSintatico {
         verificarToken(TokenType.DELIMITER, ";");
     }
 
-
+    // analisador de função. Se ela segue a ordem abaixo.
     private void analisarDeclaracaoFuncao() throws ErroSintatico {
         verificarToken(TokenType.IDENTIFIER, null);
         verificarToken(TokenType.DELIMITER, "(");
@@ -75,6 +75,7 @@ public class AnalisadorSintatico {
         verificarToken(TokenType.DELIMITER, "}");
     }
 
+    // analisa os parametros que a função tem
     private void analisarParametros() throws ErroSintatico {
         while (tokenAtual() != null && tokenAtual().getType() == TokenType.IDENTIFIER) {
             consumirToken();
@@ -88,6 +89,7 @@ public class AnalisadorSintatico {
         }
     }
 
+    // analisador do bloco de codigo dentro da função
     private void analisarComando() throws ErroSintatico {
         Token token = tokenAtual();
 
@@ -108,6 +110,7 @@ public class AnalisadorSintatico {
         }
     }
 
+    // metodo que verifica o tipo do token informado com algum valor(optional).
     private void verificarToken(TokenType esperado, String valorEsperado) throws ErroSintatico {
         Token token = tokenAtual();
 
@@ -122,6 +125,7 @@ public class AnalisadorSintatico {
         consumirToken();
     }
 
+    //  verifica se o termo é um dos tipos do analisador lexico
     private void verificarTermo() throws ErroSintatico {
         Token token = tokenAtual();
         if (token == null ||
@@ -135,6 +139,7 @@ public class AnalisadorSintatico {
         consumirToken();
     }
 
+    // verifica o simbolo de um operador
     private void analisarExpressao() throws ErroSintatico {
         verificarTermo(); // Primeiro termo da expressão
 

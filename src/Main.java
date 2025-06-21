@@ -87,7 +87,7 @@ public class Main {
         testarCodigo("Erro: tipo inexistente", erro_tipo_invalido);
 
     }
-
+    //Metodo para que chamamos para testar as sentenças de codigo das variaveis acima
     private static void testarCodigo(String nomeTeste, String codigo) {
         System.out.println("🔍 Testando: " + nomeTeste);
         System.out.println("Código:\n" + codigo);
@@ -96,32 +96,33 @@ public class Main {
         try {
             // Analise lexica
             List<Token> tokens = AnalisadorLexico.tokenize(codigo);
-            System.out.println("✅ Análise léxica concluída.");
+            System.out.println("Análise léxica concluída.");
 
+            // Descomente se quiser ver os tokens que são analisados
             // tokens.forEach(System.out::println);
 
             // Analise sintatica
             AnalisadorSintatico analisadorSintatico = new AnalisadorSintatico(tokens);
             analisadorSintatico.analisar();
-            System.out.println("✅ Análise sintática concluída.");
+            System.out.println("Análise sintática concluída.");
 
             // Analise semantica
             AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(tokens);
             boolean valido = analisadorSemantico.analisar();
 
             if (valido) {
-                System.out.println("✅ Análise semântica concluída.");
-                System.out.println("🎉 Código válido!");
+                System.out.println("Análise semântica concluída.");
+                System.out.println("Código válido!");
             } else {
-                System.out.println("❌ Código contém erro semântico.");
+                System.out.println("Código contém erro semântico.");
             }
 
         } catch (ErroSintatico e) {
-            System.out.println("❌ Erro sintático: " + e.getMessage());
+            System.out.println("Erro sintático: " + e.getMessage());
         } catch (ErroSemantico e) {
-            System.out.println("❌ Erro semântico: " + e.getMessage());
+            System.out.println("Erro semântico: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("❌ Erro inesperado: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            System.out.println("Erro inesperado: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
 
         System.out.println("==============================\n");

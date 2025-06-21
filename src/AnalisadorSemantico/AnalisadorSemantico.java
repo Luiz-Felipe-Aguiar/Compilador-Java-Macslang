@@ -10,13 +10,16 @@ public class AnalisadorSemantico {
     private List<Token> tokens;
     private int posicaoAtual = 0;
 
+    // tebela de variaveis que utilizamos para validar a semantica do codigo
     private Map<String, String> tabelaVariaveis = new HashMap<>();
     private String tipoDeRetornoAtual = null;
 
+    // classe recebe uma List<Tokens> que vem to analisador lexico
     public AnalisadorSemantico(List<Token> tokens) {
         this.tokens = tokens;
     }
 
+    // Ponto inicial da validação semantica, percorre por todos os tokens
     public boolean analisar() {
         try {
             while (posicaoAtual < tokens.size()) {
@@ -30,6 +33,7 @@ public class AnalisadorSemantico {
         }
     }
 
+    // Analisa a declaração e a valida baseado no tipo da sentença, declaração de variavel ou função
     private void analisarDeclaracao() throws ErroSemantico, ErroSintatico {
         Token token = tokenAtual();
 
@@ -48,6 +52,7 @@ public class AnalisadorSemantico {
         }
     }
 
+    // analisador de declarador de função
     private void analisarDeclaracaoFuncao() throws ErroSemantico, ErroSintatico {
         Token nomeFuncao = tokenAtual();
         verificarToken(TokenType.IDENTIFIER, null);
@@ -123,6 +128,7 @@ public class AnalisadorSemantico {
         tipoDeRetornoAtual = null;
     }
 
+    // analisador de declaração de variavel
     private void analisarDeclaracaoVariavel() throws ErroSemantico, ErroSintatico {
         Token identificador = tokenAtual();
         verificarToken(TokenType.IDENTIFIER, null);
@@ -149,6 +155,7 @@ public class AnalisadorSemantico {
         tabelaVariaveis.put(identificador.getValue(), tipoToken.getValue());
     }
 
+    // analisador de expressão (operadores)
     private String analisarExpressao() throws ErroSemantico, ErroSintatico {
         Token termo = tokenAtual();
         if (termo == null) throw new ErroSemantico("Expressão incompleta.");
@@ -167,6 +174,7 @@ public class AnalisadorSemantico {
         return tipo;
     }
 
+    // valida tipo da variavel
     private String resolverTipoLiteral(Token token) throws ErroSemantico {
         switch (token.getType()) {
             case NUMBER: return "int";
@@ -183,6 +191,7 @@ public class AnalisadorSemantico {
         }
     }
 
+    // validador de token
     private void verificarToken(TokenType esperado, String valorEsperado) throws ErroSintatico {
         Token token = tokenAtual();
 
@@ -197,6 +206,7 @@ public class AnalisadorSemantico {
         consumirToken();
     }
 
+    //retorna o token verificado atualmente
     private Token tokenAtual() {
         return posicaoAtual < tokens.size() ? tokens.get(posicaoAtual) : null;
     }
