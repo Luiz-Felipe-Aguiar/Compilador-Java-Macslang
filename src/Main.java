@@ -9,10 +9,10 @@ public class Main {
 
         //Função correta com operação e retorno:
         String funcao_correta = """
-                func calculaDobro(x: int): int {
-                    var resultado: int = x * 2;
-                    return resultado;
-                }
+                func fatorial(n:int): int {
+                    	var resultado: int = 1;
+                    	return resultado;
+                    	}
             """;
         testarCodigo("Função correta com operação e retorno", funcao_correta);
 
@@ -87,9 +87,10 @@ public class Main {
         testarCodigo("Erro: tipo inexistente", erro_tipo_invalido);
 
     }
-    //Metodo para que chamamos para testar as sentenças de codigo das variaveis acima
+
     private static void testarCodigo(String nomeTeste, String codigo) {
-        System.out.println("🔍 Testando: " + nomeTeste);
+        //metodo que chama os metodos de teste de todas as classes e se executa sem exeptions ele valida teste por tesste
+        System.out.println("Testando: " + nomeTeste);
         System.out.println("Código:\n" + codigo);
         System.out.println("--------------");
 
@@ -98,7 +99,6 @@ public class Main {
             List<Token> tokens = AnalisadorLexico.tokenize(codigo);
             System.out.println("Análise léxica concluída.");
 
-            // Descomente se quiser ver os tokens que são analisados
             // tokens.forEach(System.out::println);
 
             // Analise sintatica
