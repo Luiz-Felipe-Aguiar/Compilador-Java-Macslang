@@ -7,31 +7,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnalisadorLexico {
-    // Set de palavras-chaves da linguagem
+    // Palavras-chave da linguagem
     private static final Set<String> KEYWORDS = Set.of("var", "func", "return");
-    // Set de tipos primitivos
+    // Tipos primitivos
     private static final Set<String> TYPES = Set.of("int", "float", "string", "char");
-    // Set de operadores e delimitadores
+    // Operadores e delimitadores
     private static final Set<String> OPERATORS = Set.of("+", "-", "*", "/", "=");
     private static final Set<String> DELIMITERS = Set.of(";", "(", ")", "{", "}", ",", ":");
 
-    // Regex validadores dos tipos
+    //Validadores dos identifiers
     private static final String IDENTIFIER_REGEX = "[a-zA-Z_]\\w*";
     private static final String NUMBER_REGEX = "\\d+(?!\\.)";
     private static final String FLOAT_REGEX = "\\d+\\.\\d+";
     private static final String STRING_REGEX = "\"[^\"]*\"";
     private static final String CHAR_REGEX = "'(.)'";
 
-    // Metodo que faz a separação dos tokens
+    //Metodo para a separação dos tokens
     public static List<Token> tokenize(String input) {
-        // Inicialização do array list que retornamos
+        //Array list de retorno
         List<Token> tokens = new ArrayList<>();
+        // Regex que captura todos os tipos de tokens
 
-        // Analisador de padroes baseados no regex informadp para dividir em tokens
+        //Apenas um modelo de dividão por regex
         Pattern pattern = Pattern.compile("\"[^\"]*\"|'[^']'|\\d+\\.\\d+|\\d+|[a-zA-Z_]\\w*|[;,+\\-*/(){}=:]");
+        // Classe que acha os valores com base no modelo passado acima
         Matcher matcher = pattern.matcher(input);
 
-        // Loop que identifica o tipo de cada token
+        //Loop que identifica os  do array words
         while (matcher.find()) {
             String word = matcher.group();
             if (word.isEmpty()) continue;
